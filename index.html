@@ -425,6 +425,96 @@
   .faq-item summary::after { content: '+'; font-size: 1.3rem; color: var(--red); flex-shrink: 0; transition: transform .2s; }
   .faq-item[open] summary::after { transform: rotate(45deg); }
   .faq-item p { margin: .75rem 0 0; color: var(--muted); font-size: .9rem; line-height: 1.55; }
+  .faq-item[open] p { animation: faq-in .3s ease; }
+  .faq-item summary::after { transition: transform .25s ease; }
+  .faq-item { transition: border-color .2s, transform .2s; }
+  .faq-item:hover { border-color: var(--border-strong); }
+  @keyframes faq-in { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* ================= Animaciones y micro-interacciones ================= */
+
+  /* Reveal on scroll */
+  .reveal { opacity: 0; transform: translateY(28px); transition: opacity .65s ease, transform .65s ease; }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+  .nosotros-grid .reveal:nth-child(1) { transition-delay: 0s; }
+  .nosotros-grid .reveal:nth-child(2) { transition-delay: .1s; }
+  .nosotros-grid .reveal:nth-child(3) { transition-delay: .2s; }
+  .nosotros-grid .reveal:nth-child(4) { transition-delay: .3s; }
+  .faq-lista .reveal:nth-child(1) { transition-delay: 0s; }
+  .faq-lista .reveal:nth-child(2) { transition-delay: .08s; }
+  .faq-lista .reveal:nth-child(3) { transition-delay: .16s; }
+  .faq-lista .reveal:nth-child(4) { transition-delay: .24s; }
+  .faq-lista .reveal:nth-child(5) { transition-delay: .32s; }
+  .badges-confianza .reveal:nth-child(1) { transition-delay: 0s; }
+  .badges-confianza .reveal:nth-child(2) { transition-delay: .08s; }
+  .badges-confianza .reveal:nth-child(3) { transition-delay: .16s; }
+  .badges-confianza .reveal:nth-child(4) { transition-delay: .24s; }
+  .grilla .reveal { transition-delay: calc(var(--i, 0) * 70ms); }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+
+  /* Header compacto al scrollear */
+  header { transition: padding .25s ease, background .25s ease, box-shadow .25s ease; }
+  header.scrolled { padding: .65rem 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,.45); }
+  header.scrolled .logo-img { height: 40px; }
+  .logo-img { transition: height .25s ease; }
+
+  /* Botones: efecto shine al hover */
+  .btn-hero, .btn-wa { position: relative; overflow: hidden; }
+  .btn-hero::after, .btn-wa::after {
+    content: ''; position: absolute; top: 0; left: -75%; width: 45%; height: 100%;
+    background: linear-gradient(115deg, transparent, rgba(255,255,255,.35), transparent);
+    transform: skewX(-20deg); pointer-events: none;
+  }
+  .btn-hero:hover::after, .btn-wa:hover::after { animation: shine .65s ease; }
+  @keyframes shine { from { left: -75%; } to { left: 130%; } }
+
+  /* Cards del catálogo: shine sutil al hover */
+  .card { position: relative; isolation: isolate; }
+  .card::after {
+    content: ''; position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    background: linear-gradient(115deg, transparent 40%, rgba(255,255,255,.06) 50%, transparent 60%);
+    transform: translateX(-100%); transition: none;
+  }
+  .card:hover::after { transform: translateX(100%); transition: transform .7s ease; }
+
+  /* Hero: glow animado + entrada del contenido */
+  .hero::before { animation: hero-glow 7s ease-in-out infinite alternate; }
+  @keyframes hero-glow { from { opacity: .75; transform: scale(1); } to { opacity: 1; transform: scale(1.06); } }
+  .hero-content > * { opacity: 0; transform: translateY(18px); animation: hero-in .7s ease forwards; }
+  .hero-content .hero-eyebrow { animation-delay: .05s; }
+  .hero-content .hero-title { animation-delay: .15s; }
+  .hero-content .hero-sub { animation-delay: .32s; }
+  .hero-content .hero-actions { animation-delay: .48s; }
+  @keyframes hero-in { to { opacity: 1; transform: translateY(0); } }
+
+  /* Transición al cambiar de vista */
+  @keyframes vista-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+  #vista-home:not(.oculto), #vista-detalle:not(.oculto), #vista-vender:not(.oculto), #vista-admin:not(.oculto) {
+    animation: vista-in .45s ease;
+  }
+
+  /* WhatsApp flotante: pulso sutil */
+  @keyframes wa-pulso {
+    0%, 100% { box-shadow: 0 8px 24px rgba(37,211,102,.4); }
+    50% { box-shadow: 0 8px 28px rgba(37,211,102,.65), 0 0 0 9px rgba(37,211,102,.12); }
+  }
+  .wa-flotante { animation: wa-pulso 2.8s ease-in-out infinite; }
+  .wa-flotante:hover { animation: none; }
+
+  /* Botón volver arriba */
+  .btn-arriba {
+    position: fixed; left: 1.25rem; bottom: 1.25rem; z-index: 40;
+    width: 46px; height: 46px; border-radius: 50%;
+    background: var(--surface); border: 1px solid var(--border-strong); color: var(--white);
+    font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    opacity: 0; transform: translateY(10px); pointer-events: none;
+    transition: opacity .25s ease, transform .25s ease, background .15s, border-color .15s;
+  }
+  .btn-arriba.visible { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .btn-arriba:hover { background: var(--red); border-color: var(--red); }
+  @media (max-width: 600px) { .btn-arriba { width: 40px; height: 40px; left: 1rem; bottom: 1rem; } }
 </style>
 </head>
 <body>
@@ -463,13 +553,13 @@
     </div>
 
     <div class="badges-confianza">
-      <div class="badge-confianza"><span class="badge-confianza-icono">✅</span>Garantía incluida</div>
-      <div class="badge-confianza"><span class="badge-confianza-icono">🔍</span>Vehículos revisados</div>
-      <div class="badge-confianza"><span class="badge-confianza-icono">🤝</span>Atención personalizada</div>
-      <div class="badge-confianza"><span class="badge-confianza-icono">📋</span>Trámites simples</div>
+      <div class="badge-confianza reveal"><span class="badge-confianza-icono">✅</span>Garantía incluida</div>
+      <div class="badge-confianza reveal"><span class="badge-confianza-icono">🔍</span>Vehículos revisados</div>
+      <div class="badge-confianza reveal"><span class="badge-confianza-icono">🤝</span>Atención personalizada</div>
+      <div class="badge-confianza reveal"><span class="badge-confianza-icono">📋</span>Trámites simples</div>
     </div>
 
-    <section id="nosotros" class="seccion">
+    <section id="nosotros" class="seccion reveal">
       <p class="seccion-eyebrow">Quiénes somos</p>
       <h2 class="seccion-titulo">Compra y venta con <span>transparencia</span></h2>
       <p class="seccion-texto">
@@ -478,26 +568,26 @@
         personalizada en cada paso, desde la consulta inicial hasta la entrega.
       </p>
       <div class="nosotros-grid">
-        <div class="nosotros-card">
+        <div class="nosotros-card reveal">
           <h3>Garantía incluida</h3>
           <p>Todos los vehículos que vendemos tienen garantía.</p>
         </div>
-        <div class="nosotros-card">
+        <div class="nosotros-card reveal">
           <h3>Revisión previa</h3>
           <p>Cada unidad se revisa antes de publicarse en el catálogo.</p>
         </div>
-        <div class="nosotros-card">
+        <div class="nosotros-card reveal">
           <h3>Atención personalizada</h3>
           <p>Te acompañamos en todo el proceso, por WhatsApp o en persona.</p>
         </div>
-        <div class="nosotros-card">
+        <div class="nosotros-card reveal">
           <h3>Compra, venta y permuta</h3>
           <p>Te ayudamos a encontrar la mejor opción para tu próximo vehículo.</p>
         </div>
       </div>
     </section>
 
-    <div id="catalogo" class="seccion-catalogo">
+    <div id="catalogo" class="seccion-catalogo reveal">
       <p class="seccion-eyebrow">Nuestro stock</p>
       <h2 class="seccion-titulo">Vehículos disponibles</h2>
       <p class="seccion-texto">Estas son las unidades que tenemos publicadas ahora mismo.</p>
@@ -534,7 +624,7 @@
     </div>
     <div id="grilla" class="grilla"><p class="vacio"><span class="icono">⏳</span>Cargando catálogo...</p></div>
 
-    <div class="no-encontras">
+    <div class="no-encontras reveal">
       <h3>¿No encontrás lo que buscás?</h3>
       <p>Contanos qué vehículo estás buscando y te avisamos apenas tengamos uno así.</p>
       <a class="btn-wa" href="https://api.whatsapp.com/send/?phone=5491176279491&text=Hola!%20Estoy%20buscando%20un%20veh%C3%ADculo%20en%20particular%2C%20%C2%BFme%20pueden%20ayudar%3F&type=phone_number&app_absent=0" target="_blank" rel="noopener">
@@ -543,27 +633,27 @@
       </a>
     </div>
 
-    <section id="faq" class="seccion">
+    <section id="faq" class="seccion reveal">
       <p class="seccion-eyebrow">Preguntas frecuentes</p>
       <h2 class="seccion-titulo">Todo lo que necesitás saber</h2>
       <div class="faq-lista">
-        <details class="faq-item">
+        <details class="faq-item reveal">
           <summary>¿Los vehículos tienen garantía?</summary>
           <p>Sí, todos los vehículos que vendemos incluyen garantía.</p>
         </details>
-        <details class="faq-item">
+        <details class="faq-item reveal">
           <summary>¿Puedo entregar mi vehículo como parte de pago?</summary>
           <p>Sí, aceptamos permuta. Escribinos por WhatsApp para coordinar la tasación.</p>
         </details>
-        <details class="faq-item">
+        <details class="faq-item reveal">
           <summary>¿Cómo hago para vender mi vehículo con ustedes?</summary>
           <p>Entrá a la sección "Vendé tu vehículo" para ver qué información necesitamos, o escribinos directo por WhatsApp.</p>
         </details>
-        <details class="faq-item">
+        <details class="faq-item reveal">
           <summary>¿Cómo los contacto?</summary>
           <p>Por WhatsApp o Instagram — los links están en el encabezado y en el pie de página.</p>
         </details>
-        <details class="faq-item">
+        <details class="faq-item reveal">
           <summary>¿El catálogo está actualizado?</summary>
           <p>Sí, se actualiza directamente desde nuestra base — lo que ves acá es lo que tenemos disponible ahora.</p>
         </details>
@@ -644,6 +734,8 @@
   <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm5.8 14.16c-.24.68-1.4 1.3-1.93 1.34-.5.04-1 .24-3.36-.7-2.84-1.13-4.66-4.02-4.8-4.21-.14-.19-1.15-1.53-1.15-2.92s.72-2.07.98-2.35c.25-.28.55-.35.74-.35h.53c.17 0 .4-.06.62.48.24.58.81 2 .88 2.15.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.16-.29.36-.42.48-.14.14-.28.29-.12.57.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.28.14.44.12.6-.07.16-.19.7-.81.88-1.09.19-.28.37-.23.62-.14.26.09 1.63.77 1.9.91.28.14.47.21.53.33.07.12.07.68-.17 1.36z"/></svg>
   <span class="wa-flotante-texto">Escribinos</span>
 </a>
+
+<button id="btn-arriba" class="btn-arriba" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba" title="Volver arriba">↑</button>
 
 <div id="overlay-cargando" class="overlay-cargando oculto">
   <div class="overlay-cargando-caja">
@@ -738,7 +830,34 @@ function render() {
     renderHome();
     vistaHome.classList.remove('oculto');
   }
+  observarReveal();
 }
+
+// ---------- Animaciones: reveal on scroll, header compacto, volver arriba ----------
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15 });
+
+function observarReveal(contenedor) {
+  (contenedor || document).querySelectorAll('.reveal:not(.visible)').forEach(el => revealObserver.observe(el));
+}
+
+let scrollTicking = false;
+window.addEventListener('scroll', () => {
+  if (scrollTicking) return;
+  scrollTicking = true;
+  requestAnimationFrame(() => {
+    const y = window.scrollY;
+    document.querySelector('header').classList.toggle('scrolled', y > 40);
+    document.getElementById('btn-arriba').classList.toggle('visible', y > 500);
+    scrollTicking = false;
+  });
+});
 
 // ---------- Home: grilla + filtros + orden ----------
 function poblarFiltroMarcas() {
@@ -788,8 +907,8 @@ function renderHome() {
     return;
   }
 
-  grilla.innerHTML = lista.map(a => `
-    <div class="card" onclick="location.hash='#auto/${a.id}'">
+  grilla.innerHTML = lista.map((a, i) => `
+    <div class="card reveal" style="--i:${i % 8}" onclick="location.hash='#auto/${a.id}'">
       <div class="imagen-wrap">
         <img src="${a.fotoPrincipal || (a.fotos[0] || '')}" alt="${a.titulo}" loading="lazy" onerror="reintentarImagen(this)">
       </div>
@@ -800,6 +919,7 @@ function renderHome() {
       </div>
     </div>
   `).join('');
+  observarReveal(grilla);
 }
 
 // ---------- Detalle ----------

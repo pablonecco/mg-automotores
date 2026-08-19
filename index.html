@@ -218,8 +218,25 @@
   }
   .detalle-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 2.5rem; align-items: start; }
   @media (max-width: 800px) { .detalle-grid { grid-template-columns: 1fr; gap: 1.5rem; } }
-  .galeria-principal { border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md); background: var(--surface-2); border: 1px solid var(--border); }
-  .galeria-principal img { width: 100%; display: block; max-height: 460px; object-fit: cover; }
+  .galeria-principal {
+    position: relative; border-radius: var(--radius-lg); overflow: hidden; box-shadow: var(--shadow-md);
+    background: #000; border: 1px solid var(--border); aspect-ratio: 4 / 3;
+  }
+  .galeria-track {
+    display: flex; height: 100%; overflow-x: auto; scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch; scrollbar-width: none;
+  }
+  .galeria-track::-webkit-scrollbar { display: none; }
+  .galeria-slide { flex: 0 0 100%; scroll-snap-align: start; display: flex; align-items: center; justify-content: center; height: 100%; }
+  .galeria-slide img { max-width: 100%; max-height: 100%; object-fit: contain; display: block; }
+  .galeria-flecha {
+    position: absolute; top: 50%; transform: translateY(-50%); width: 40px; height: 40px; border-radius: 50%;
+    background: rgba(0,0,0,.55); color: #fff; border: none; font-size: 1.5rem; line-height: 1; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: background .15s;
+  }
+  .galeria-flecha:hover { background: rgba(232,32,10,.8); }
+  .galeria-flecha-izq { left: .6rem; }
+  .galeria-flecha-der { right: .6rem; }
   .galeria-thumbs { display: flex; gap: 0.6rem; margin-top: 0.75rem; flex-wrap: wrap; }
   .galeria-thumbs img {
     width: 76px; height: 58px; object-fit: cover; border-radius: 10px; cursor: pointer;
@@ -237,7 +254,7 @@
 
   .oculto { display: none !important; }
 
-  .admin-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.5rem; box-shadow: var(--shadow-sm); }
+  .admin-box { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1.5rem; box-shadow: var(--shadow-sm); overflow: hidden; }
   .admin-toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; flex-wrap: wrap; gap: .75rem; }
   .admin-toolbar h2 { margin: 0; font-size: 1.15rem; }
   .tabla-scroll { overflow-x: auto; border-radius: var(--radius-sm); }
@@ -295,6 +312,13 @@
     .filtros { display: none; }
     .toggle-filtros-checkbox:checked ~ .filtros { display: flex; }
     .filtros label { flex: 1 1 100%; }
+
+    .admin-box { padding: 1rem; border-radius: var(--radius-sm); }
+    .admin-toolbar { flex-direction: column; align-items: stretch; }
+    .admin-toolbar button, .admin-toolbar .btn-secundario { width: 100%; text-align: center; }
+    .admin-toolbar h2 { font-size: 1.05rem; }
+    .foto-admin { flex: 1 1 calc(50% - .45rem); }
+    .foto-admin img { width: 100%; height: 90px; }
   }
 
   footer { border-top: 1px solid var(--border); padding: 2.5rem 1.5rem 1.5rem; }
@@ -332,6 +356,20 @@
     .footer-content { flex-direction: column; align-items: center; text-align: center; }
     .footer-bottom { flex-direction: column; text-align: center; }
   }
+
+  .overlay-cargando {
+    position: fixed; inset: 0; z-index: 200;
+    background: rgba(10,10,10,.8); backdrop-filter: blur(2px);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .overlay-cargando-caja { display: flex; flex-direction: column; align-items: center; gap: 1rem; }
+  .overlay-cargando-caja p { color: var(--white); font-weight: 600; font-size: .95rem; margin: 0; }
+  .spinner {
+    width: 42px; height: 42px; border-radius: 50%;
+    border: 4px solid var(--border); border-top-color: var(--red);
+    animation: girar .7s linear infinite;
+  }
+  @keyframes girar { to { transform: rotate(360deg); } }
 </style>
 </head>
 <body>
@@ -463,12 +501,19 @@
   <svg viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.46 1.32 4.96L2.05 22l5.25-1.38a9.9 9.9 0 0 0 4.74 1.21h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0 0 12.04 2zm5.8 14.16c-.24.68-1.4 1.3-1.93 1.34-.5.04-1 .24-3.36-.7-2.84-1.13-4.66-4.02-4.8-4.21-.14-.19-1.15-1.53-1.15-2.92s.72-2.07.98-2.35c.25-.28.55-.35.74-.35h.53c.17 0 .4-.06.62.48.24.58.81 2 .88 2.15.07.14.12.31.02.5-.09.19-.14.31-.28.48-.14.16-.29.36-.42.48-.14.14-.28.29-.12.57.16.28.72 1.19 1.55 1.93 1.06.95 1.96 1.24 2.24 1.38.28.14.44.12.6-.07.16-.19.7-.81.88-1.09.19-.28.37-.23.62-.14.26.09 1.63.77 1.9.91.28.14.47.21.53.33.07.12.07.68-.17 1.36z"/></svg>
 </a>
 
+<div id="overlay-cargando" class="overlay-cargando oculto">
+  <div class="overlay-cargando-caja">
+    <div class="spinner"></div>
+    <p>Guardando...</p>
+  </div>
+</div>
+
 <script>
 // ==== CONFIGURACIÓN — editar antes de usar ====
 const SPREADSHEET_ID = '1ey2twsuVi03z733tOOezrAV84awWyGOCQetq06W0kb4';
 const SHEETS_API_KEY = 'AIzaSyDLXs6kJG1lB3yRpMKju76sEci-eJgTT4E';
 const SHEET_NAME = 'Autos';
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwbrqVqDM1sS35REYgE2YX1Ws52sW75bhJ-Y7r5LXg16eA3CsKcHAtbN8E3GU7rh3lx/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4SIM7GVpJ6LGpUxHDmEXZ28l76FUPcf6gHjtcw5pE8rrd-mgkGgxtmpWlr40_Jql6/exec';
 // ================================================
 
 let autos = [];
@@ -617,8 +662,12 @@ function renderDetalle(id) {
     return;
   }
 
-  const fotos = a.fotos.length ? a.fotos : [a.fotoPrincipal].filter(Boolean);
-  const principal = a.fotoPrincipal || fotos[0] || '';
+  const fotosBase = a.fotos.length ? a.fotos : [a.fotoPrincipal].filter(Boolean);
+  const principal = a.fotoPrincipal || fotosBase[0] || '';
+  const idxPrincipal = fotosBase.indexOf(principal);
+  const fotos = idxPrincipal > 0
+    ? [principal, ...fotosBase.slice(0, idxPrincipal), ...fotosBase.slice(idxPrincipal + 1)]
+    : fotosBase;
   const mensajeWa = encodeURIComponent(`Hola! Te escribo por el ${a.titulo} (${a.marca} ${a.modelo} ${a.anio}) que vi en la web.`);
   const linkWa = `https://api.whatsapp.com/send/?phone=5491176279491&text=${mensajeWa}&type=phone_number&app_absent=0`;
 
@@ -626,9 +675,17 @@ function renderDetalle(id) {
     <span class="detalle-volver" onclick="location.hash='#home'">← Volver al catálogo</span>
     <div class="detalle-grid">
       <div>
-        <div class="galeria-principal"><img id="foto-grande" src="${principal}" alt="${a.titulo}" onerror="reintentarImagen(this)"></div>
+        <div class="galeria-principal">
+          <div class="galeria-track" id="galeria-track">
+            ${fotos.map(url => `<div class="galeria-slide"><img src="${url}" alt="${a.titulo}" onerror="reintentarImagen(this)"></div>`).join('')}
+          </div>
+          ${fotos.length > 1 ? `
+            <button class="galeria-flecha galeria-flecha-izq" onclick="moverGaleria(-1)" aria-label="Foto anterior">‹</button>
+            <button class="galeria-flecha galeria-flecha-der" onclick="moverGaleria(1)" aria-label="Foto siguiente">›</button>
+          ` : ''}
+        </div>
         <div class="galeria-thumbs">
-          ${fotos.map(url => `<img src="${url}" class="${url === principal ? 'activa' : ''}" onclick="cambiarFotoGrande(this, '${url}')" onerror="reintentarImagen(this)">`).join('')}
+          ${fotos.map((url, i) => `<img src="${url}" class="${i === 0 ? 'activa' : ''}" onclick="irAFoto(${i})" onerror="reintentarImagen(this)">`).join('')}
         </div>
       </div>
       <div class="detalle-info">
@@ -648,12 +705,38 @@ function renderDetalle(id) {
       </div>
     </div>
   `;
+
+  galeriaIndice = 0;
+  galeriaTotal = fotos.length;
+  const track = document.getElementById('galeria-track');
+  if (track) track.addEventListener('scroll', onScrollGaleria);
 }
 
-function cambiarFotoGrande(imgEl, url) {
-  document.getElementById('foto-grande').src = url;
-  document.querySelectorAll('.galeria-thumbs img').forEach(img => img.classList.remove('activa'));
-  imgEl.classList.add('activa');
+let galeriaIndice = 0;
+let galeriaTotal = 0;
+
+function irAFoto(i) {
+  galeriaIndice = Math.max(0, Math.min(galeriaTotal - 1, i));
+  const track = document.getElementById('galeria-track');
+  track.scrollTo({ left: galeriaIndice * track.clientWidth, behavior: 'smooth' });
+  actualizarThumbActiva();
+}
+
+function moverGaleria(delta) {
+  irAFoto(galeriaIndice + delta);
+}
+
+function actualizarThumbActiva() {
+  document.querySelectorAll('.galeria-thumbs img').forEach((img, i) => img.classList.toggle('activa', i === galeriaIndice));
+}
+
+function onScrollGaleria(event) {
+  const track = event.target;
+  const nuevoIndice = Math.round(track.scrollLeft / track.clientWidth);
+  if (nuevoIndice !== galeriaIndice) {
+    galeriaIndice = nuevoIndice;
+    actualizarThumbActiva();
+  }
 }
 
 // ---------- Admin ----------
@@ -838,9 +921,24 @@ async function guardarAuto(id) {
 
   if (!datos.titulo) { alert('El título es obligatorio.'); return; }
 
-  await llamarAppsScript(id ? 'editarAuto' : 'crearAuto', adminPassword, datos);
-  await cargarAutos();
-  renderAdminLista();
+  mostrarCargando('Guardando vehículo...');
+  try {
+    await llamarAppsScript(id ? 'editarAuto' : 'crearAuto', adminPassword, datos);
+    await cargarAutos();
+    renderAdminLista();
+  } finally {
+    ocultarCargando();
+  }
+}
+
+function mostrarCargando(texto) {
+  const overlay = document.getElementById('overlay-cargando');
+  overlay.querySelector('p').textContent = texto || 'Cargando...';
+  overlay.classList.remove('oculto');
+}
+
+function ocultarCargando() {
+  document.getElementById('overlay-cargando').classList.add('oculto');
 }
 
 async function borrarAuto(id) {

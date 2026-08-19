@@ -83,9 +83,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    background: rgba(10,10,10,.85);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border);
+    background: linear-gradient(rgba(10,10,10,.5), rgba(10,10,10,0));
+    border-bottom: 1px solid transparent;
   }
   .logo {
     margin: 0;
@@ -132,16 +131,32 @@
     padding: 3.5rem 1.5rem 3rem;
     margin: -1.75rem -1.5rem 2rem;
     text-align: center;
+    min-height: 640px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-image: url('hero.jpg');
+    background-size: cover;
+    background-position: center 78%;
   }
   .hero::before {
     content: '';
     position: absolute;
     inset: 0;
     background:
+      linear-gradient(180deg, rgba(8,8,8,.55) 0%, rgba(8,8,8,.35) 45%, rgba(8,8,8,.65) 100%),
       radial-gradient(ellipse 70% 60% at 50% 0%, rgba(232,32,10,.22) 0%, transparent 70%),
       radial-gradient(ellipse 40% 40% at 85% 90%, rgba(232,32,10,.1) 0%, transparent 60%);
     pointer-events: none;
   }
+  .hero::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0; bottom: 0; height: 220px;
+    background: linear-gradient(to bottom, transparent, var(--black));
+    pointer-events: none;
+  }
+  @media (max-width: 600px) { .hero { min-height: 520px; } }
   .hero-content { position: relative; max-width: 720px; margin: 0 auto; }
   .hero-eyebrow { text-transform: uppercase; letter-spacing: .18em; font-size: .75rem; color: var(--red); font-weight: 700; margin: 0 0 .75rem; }
   .hero-title { font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.8rem, 9vw, 5.2rem); letter-spacing: .02em; line-height: 1.02; color: var(--white); margin: 0 0 1.25rem; }
@@ -481,8 +496,11 @@
   }
 
   /* Header compacto al scrollear */
-  header { transition: padding .25s ease, background .25s ease, box-shadow .25s ease; }
-  header.scrolled { padding: .65rem 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,.45); }
+  header { transition: padding .25s ease, background .25s ease, border-color .25s ease, box-shadow .25s ease, backdrop-filter .25s ease; }
+  header.scrolled {
+    padding: .65rem 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,.45);
+    background: rgba(10,10,10,.92); backdrop-filter: blur(10px); border-bottom-color: var(--border);
+  }
   header.scrolled .logo-img { height: 40px; }
   .logo-img { transition: height .25s ease; }
 

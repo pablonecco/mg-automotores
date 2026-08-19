@@ -527,11 +527,12 @@
   /* Hero: glow animado + entrada del contenido */
   .hero::before { animation: hero-glow 7s ease-in-out infinite alternate; }
   @keyframes hero-glow { from { opacity: .75; transform: scale(1); } to { opacity: 1; transform: scale(1.06); } }
-  .hero-content > * { opacity: 0; transform: translateY(18px); animation: hero-in .7s ease forwards; }
-  .hero-content .hero-eyebrow { animation-delay: .05s; }
-  .hero-content .hero-title { animation-delay: .15s; }
-  .hero-content .hero-sub { animation-delay: .32s; }
-  .hero-content .hero-actions { animation-delay: .48s; }
+  .hero-content > * { opacity: 1; }
+  .hero-content.animando > * { opacity: 0; transform: translateY(18px); animation: hero-in .7s ease forwards; }
+  .hero-content.animando .hero-eyebrow { animation-delay: .05s; }
+  .hero-content.animando .hero-title { animation-delay: .15s; }
+  .hero-content.animando .hero-sub { animation-delay: .32s; }
+  .hero-content.animando .hero-actions { animation-delay: .48s; }
   @keyframes hero-in { to { opacity: 1; transform: translateY(0); } }
 
   /* Transición al cambiar de vista */
@@ -1061,7 +1062,13 @@ async function abrirAdmin() {
   if (!adminPassword) {
     const intento = prompt('Password de administrador:');
     if (!intento) return;
-    const res = await llamarAppsScript('login', intento, {});
+    mostrarCargando('Iniciando sesión...');
+    let res;
+    try {
+      res = await llamarAppsScript('login', intento, {});
+    } finally {
+      ocultarCargando();
+    }
     if (!res.data) {
       alert('Password incorrecto.');
       return;
@@ -1294,6 +1301,17 @@ poblarFiltrosAnio();
 
 cargarAutos();
 iniciarIntro();
+animarHeroUnaVez();
+
+// Corre la animación de entrada del hero solo en la carga inicial: al terminar
+// se quita la clase para que el texto quede visible aunque la vista se
+// oculte/muestre de nuevo (ej. entrar a un auto y volver al inicio).
+function animarHeroUnaVez() {
+  const heroContent = document.querySelector('.hero-content');
+  if (!heroContent || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  heroContent.classList.add('animando');
+  setTimeout(() => heroContent.classList.remove('animando'), 1300);
+}
 
 // ---------- Intro: partículas que convergen en el logo ----------
 function cerrarIntro() {

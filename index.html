@@ -667,6 +667,7 @@
           <option value="km-desc">Km: mayor a menor</option>
         </select>
       </label>
+      <button type="button" class="btn-secundario" onclick="limpiarFiltros()">Borrar filtros</button>
     </div>
     <div id="grilla" class="grilla"><p class="vacio"><span class="icono">⏳</span>Cargando catálogo...</p></div>
 
@@ -924,6 +925,16 @@ function poblarFiltrosAnio() {
   }
   document.getElementById('f-anio-min').innerHTML = opciones;
   document.getElementById('f-anio-max').innerHTML = opciones;
+}
+
+function limpiarFiltros() {
+  document.getElementById('f-marca').value = '';
+  document.getElementById('f-modelo').value = '';
+  document.getElementById('f-anio-min').value = '';
+  document.getElementById('f-anio-max').value = '';
+  document.getElementById('f-precio-max').value = '';
+  document.getElementById('f-orden').value = '';
+  renderHome();
 }
 
 function renderHome() {

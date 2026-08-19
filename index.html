@@ -29,6 +29,7 @@
     --shadow-lg: 0 20px 45px rgba(0,0,0,.6);
   }
   * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
   body {
     margin: 0;
     font-family: 'DM Sans', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -812,7 +813,7 @@ window.addEventListener('hashchange', () => {
   render();
   const anchor = document.getElementById(location.hash.slice(1));
   if (anchor) anchor.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  else window.scrollTo(0, 0);
+  else window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 });
 
 function render() {
